@@ -1,0 +1,1 @@
+{"question": "Selecciona tu respuesta:", "fields": ["A", "B"], "percent": {"A": 100.0, "B": 0.0}, "answers": {"A": 1, "B": 0}, "fname": "data//pollQ2.csv", "totalVotes": 1}

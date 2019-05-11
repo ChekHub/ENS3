@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+  <!-- main css file -->
+  <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+  <!--<link rel="stylesheet" href="css/layout.css" />-->
+  <link rel="stylesheet" href="{{url_for('static',filename='css/layout.css')}}"
+</head>
+<body>
+  <h1>{{ data.question }}</h1>
+
+  <form action="/poll">
+    {% for e in data.fields %}
+       <input type="radio" name="field" value="{{ e }}"><a class="button1">{{ e }}</a><br><br>
+    {% endfor %}
+    <br><br>
+    <input class="button6" type="submit" value="Vote" />
+  </form>
+<!--<a href="b" class="button1">Another button</a>-->
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+  <!-- main css file -->
+  <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+  <!---<link rel="stylesheet" href="css/layoutradio.css" />--->
+  <link rel="stylesheet" href="{{url_for('static',filename='css/layoutradio.css')}}">
+</head>
+<body>
+  <div class ="container">
+  <div class="alert">
+  	<h1>{{ data.question }}</h1>
+  </div>
+  <!--<h1>{{ data.question }}</h1>--->
+
+  <form action="/poll">
+    <ul>
+      {% for e in data.fields %}
+      <li>
+        <input type="radio" id="{{ e  }}-option" name="field" value="{{ e }}">
+        <label for="{{ e }}-option">{{e}}</label>
+
+        <div class="check"><div class="inside"></div></div>
+      </li>
+      {% endfor %}
+    </ul>
+    <br><br>
+    <input class="button6" type ="submit" value="Vote" />
+  </form>
+<!--<a href="b" class="button1">Another button</a>-->
+
+
+<div class="signature">
+	<p>Creado por Sergio H. Cantu</a></p>
+</div>
+</div>
+</body>
+</html>

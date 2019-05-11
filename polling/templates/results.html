@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <!-- main css file -->
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <!---<link rel="stylesheet" href="css/layoutradio.css" />--->
+    <link rel="stylesheet" href="{{url_for('static',filename='css/layoutradio.css')}}">
+</head>
+<body>
+  <br><br><br>
+<!--  <h1>Resultados, Total de votos : {{Ntotal}}</h1>
+
+  <ul>
+  {% for e in votes %}
+    <li><h2>{{ e }} : {{ votes[e] }} - {{percent[e]}}</h2></li>
+  {% endfor %}
+</ul> -->
+  <img src="/plot.png" alt="my plot">
+
+
+</body>
+</html>
