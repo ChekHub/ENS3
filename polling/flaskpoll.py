@@ -1,14 +1,18 @@
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response, jsonify
 import os
 import io
 import matplotlib as pltb
 import json
+import zlib
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import numpy as np
 
 font = { 'family':'Times New Roman', 'weight':'bold','size': 20}
 pltb.rc('font',**font)
+
+
+## server code
 
 app = Flask(__name__)
 
@@ -17,7 +21,6 @@ poll_data = {
    'fields'   : ['A', 'B', 'C', 'D'],
    'fname'    : 'data//poll_initial.csv'
 }
-
 
 @app.route('/')
 def root():
@@ -43,7 +46,28 @@ def loadquest():
     f0 = str(f0)
     poll_data['fields'] = fs
     poll_data['fname'] =  f0
-    return "Success"
+
+    return jsonify(message = "Successfully loaded questions")
+
+@app.route('/iplot',methods=['POST'])
+def sendiplot():
+    votes = {}
+    percent = {}
+
+    for f in poll_data['fields']:
+        votes[f] = 0
+        percent[f] = 0
+
+
+    filename = poll_data['fname']
+    f  = open(filename, 'r')
+    for line in f:
+        vote = line.rstrip("\n")
+        votes[vote] += 1
+    f.close()
+
+    return jsonify(values= votes.values(), fname = poll_data['fname'], fields = votes.keys() )
+
 
 
 @app.route('/plot.png')
@@ -60,8 +84,6 @@ def plot_png():
         votes[vote] += 1
     f.close()
 
-
-
     fig = create_figure(votes)
     output = io.BytesIO()
     FigureCanvas(fig).print_png(output)
@@ -71,10 +93,16 @@ def create_figure(votes):
     fig = Figure()
     axis = fig.add_subplot(1, 1, 1)
     bar_width = 0.35
-    opacity = 0.4
+    opacity = 0.75
 
-    xs = np.arange(len(votes.keys()))
-    ys = 100*np.array(votes.values())/np.sum(votes.values())
+    x0 = [str(r1) for r1 in votes.keys()]
+    y0 = votes.values()
+    data0 = np.array([x0,y0]).T
+    data0 = data0[data0[:,0].argsort()]
+
+
+    xs = np.arange(len(data0[:,0]))
+    ys = 100*np.array(data0[:,1].astype(float))/np.sum(data0[:,1].astype(float))
 
     #fig.patch.set_visible(False)
     #axis.xaxis.label.set_color('white')
@@ -90,11 +118,11 @@ def create_figure(votes):
     axis.bar(xs, ys, bar_width, alpha=opacity, color='#0DFF92',label='resultados')
     axis.set_xlabel('Seleccion')
     axis.set_ylabel('Votos[%]')
-    axis.set_title('Resultados, Total de votos :' + str(np.sum(votes.values())))
+    axis.set_title('Resultados, Total de votos :' + str(np.sum(y0)))
     axis.yaxis.grid(True, linestyle='--', which='major', color='black', alpha=.55)
-    axis.set_xticks(xs + bar_width / 2)
+    axis.set_xticks(xs + 0.5*bar_width)
     axis.set_axis_bgcolor('white')
-    axis.set_xticklabels(votes.keys())
+    axis.set_xticklabels(data0[:,0])
     axis.legend()
 
     return fig
@@ -120,7 +148,7 @@ def show_results():
 
     for f0 in poll_data['fields']:
         percent[f0] = np.round(100.0*votes[f0]/votestotal,1)
-        
+
     poll_data['totalVotes'] = votestotal
     poll_data['answers'] = votes
     poll_data['percent'] = percent
@@ -131,4 +159,4 @@ def show_results():
     return render_template('results.html', data=poll_data, votes=votes, Ntotal=votestotal, percent = percent)
 
 if __name__ == "__main__":
-    app.run(debug=True, threaded = True)
+    app.run(debug=True, host = '0.0.0.0', threaded = True)
