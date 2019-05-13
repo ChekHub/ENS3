@@ -3,12 +3,9 @@ import os
 import io
 import matplotlib as pltb
 import json
-import zlib
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import numpy as np
-
-# Importing socket library
 import socket
 
 # Function to display hostname and
@@ -22,6 +19,8 @@ def get_Host_name_IP():
 
     except:
         print("Unable to get Hostname and IP")
+
+get_Host_name_IP()
 
 font = { 'family':'Times New Roman', 'weight':'bold','size': 20}
 pltb.rc('font',**font)
