@@ -8,6 +8,21 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import numpy as np
 
+# Importing socket library
+import socket
+
+# Function to display hostname and
+# IP address
+def get_Host_name_IP():
+    try:
+        host_name = socket.gethostname()
+        host_ip = socket.gethostbyname(host_name)
+        #print("Hostname : ",host_name)
+        print("IP : ",host_ip)
+
+    except:
+        print("Unable to get Hostname and IP")
+
 font = { 'family':'Times New Roman', 'weight':'bold','size': 20}
 pltb.rc('font',**font)
 
