@@ -141,6 +141,53 @@ def create_figure(votes):
 
     return fig
 
+##fd: agregué /plot2.png para generar la gráfica para no modificar /plot.png
+@app.route('/plot2.png')
+def plot():
+    fig = Figure()
+    axis = fig.add_subplot(1, 1, 1)
+    bar_width = 0.35
+    opacity = 0.75
+    
+    votes = {}
+    filename = poll_data['fname']
+
+    for f in poll_data['fields']:
+        votes[f] = 0
+
+    f  = open(filename, 'r')
+    for line in f:
+        vote = line.rstrip("\n")
+        votes[vote] += 1
+    f.close()
+
+    x0 = [str(r1) for r1 in votes.keys()]
+    y0 = votes.values()
+    #x0=y0
+    data0 = np.array([x0,y0]).T
+    #data1 = data0[data0[:,1].argsort()]
+    #xs = np.arange(len(data0[:,0]))
+    #ys = 100*np.array(data0[:,1].astype(float))/np.sum(data0[:,1].astype(float))
+    axis.bar(x0, y0, alpha=opacity, color='#0DFF92',label='resultados')
+    axis.set_xlabel('Seleccion')
+    axis.set_ylabel('Votos[%]')
+    axis.set_title('Resultados, Total de votos :' + str(np.sum([*y0])))
+    axis.yaxis.grid(True, linestyle='--', which='major', color='black', alpha=.55)
+    #axis.set_axis_bgcolor('white')
+    #axis.set_xticks([x0] + 0.5*bar_width)
+    axis.legend()
+
+    #axis.plot(xs, ys)
+    canvas = FigureCanvas(fig)
+    #output = StringIO.StringIO()
+    output = io.BytesIO()
+    canvas.print_png(output)
+    response = make_response(output.getvalue())
+    response.mimetype = 'image/png'
+
+    return response
+
+
 @app.route('/results')
 def show_results():
     votes = {}
